@@ -3,15 +3,13 @@
 
 #include <QMainWindow>
 #include <QPushButton>
-#include <QPushButton>
 #include <QInputDialog>
 #include <QComboBox>
 #include <QOpenGLWidget>
 #include <QMessageBox>
 #include <QVBoxLayout>
-// #include "ui_mainwindow.h"
-#include <QComboBox>
 #include "openglwidget.h"
+#include "revolvebezier.h"
 
 class MainWindow : public QMainWindow
 {
@@ -24,12 +22,13 @@ public:
 private slots:
     void onAddShapeButtonClicked();
     void onAddBezierInput();
-    void onExtrudeButtonClicked(); // New slot for extrusion
+    void onExtrudeButtonClicked();
 
 private:
     OpenGLWidget* glWidget;
+    BezierWidget* bezierWidget;
     QPushButton* pushButton;
-    QPushButton* extrudeButton; // New button for extrusion
+    QPushButton* extrudeButton;
     QComboBox* comboBox;
     QString selectedShape = "";
 };

@@ -50,7 +50,7 @@ private:
 
     std::vector<Point> tempVertices; // Temporary vertices for the polygon
     std::pair<float, float> screenToWorld(int x, int y);
-
+    //QPointF screenToWorld(const QPoint &pos);
 
     protected:
     // Cube Events

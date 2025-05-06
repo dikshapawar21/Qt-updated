@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.10)
-project(polygonExtrusion)
+project(MyApp)
  
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -16,7 +16,7 @@ include_directories(${INCLUDE_DIRECTORIES})
 # Include directories
 set(INCLUDE_DIRECTORIES
     ${CMAKE_SOURCE_DIR}/headers
-    ${CMAKE_SOURCE_DIR}/headers
+    ${CMAKE_SOURCE_DIR}/src
 )
  
 include_directories(${INCLUDE_DIRECTORIES})
@@ -26,6 +26,7 @@ file(GLOB APPLICATION_SRC
     ${CMAKE_SOURCE_DIR}/src/mainwindow.cpp
     ${CMAKE_SOURCE_DIR}/headers/mainwindow.h
     ${CMAKE_SOURCE_DIR}/src/*.cpp
+    ${CMAKE_SOURCE_DIR}/headers/*.h
 )
  
 file(GLOB OPENGL_SRC

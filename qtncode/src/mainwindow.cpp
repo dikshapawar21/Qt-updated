@@ -1,4 +1,3 @@
-
 #include "mainwindow.h"
 #include "openglwidget.h"
 #include "sphere.h"
@@ -8,7 +7,8 @@
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent)
 {
-    resize(700, 700);
+    qDebug() << "MainWindow constructor called.";
+    resize(1024, 768);
     setWindowTitle("OpenGL & QT");
 
     auto* mainWidget = new QWidget(this);
@@ -17,26 +17,30 @@ MainWindow::MainWindow(QWidget* parent)
     glWidget = new OpenGLWidget(this);
     layout->addWidget(glWidget);
 
+    comboBox = new QComboBox(this);
+    comboBox->setPlaceholderText("Select Shape");
+
+    comboBox->addItems({"bezier", "sphere", "cube", "cylinder", "revolution"});
+    layout->addWidget(comboBox);
+    
     pushButton = new QPushButton("Add Shape", this);
     layout->addWidget(pushButton);
 
-    extrudeButton = new QPushButton("Extrude", this); // New button for extrusion
+    extrudeButton = new QPushButton("Extrude", this);
     layout->addWidget(extrudeButton);
 
-    comboBox = new QComboBox(this);
-    comboBox->addItems({"bezier", "sphere", "cube", "cylinder"});
-    layout->addWidget(comboBox);
 
     connect(pushButton, &QPushButton::clicked, this, &MainWindow::onAddShapeButtonClicked);
-    connect(extrudeButton, &QPushButton::clicked, this, &MainWindow::onExtrudeButtonClicked); // Connect extrusion button
+    connect(extrudeButton, &QPushButton::clicked, this, &MainWindow::onExtrudeButtonClicked);
     selectedShape = comboBox->currentText();
-    
+
     connect(comboBox, &QComboBox::currentTextChanged, this, [this](const QString& text) {
         selectedShape = text;
     });
 
     mainWidget->setLayout(layout);
     setCentralWidget(mainWidget);
+    qDebug() << "MainWindow setup complete.";
 }
 
 MainWindow::~MainWindow()
@@ -81,12 +85,19 @@ void MainWindow::onAddShapeButtonClicked()
         qDebug() << "Drawing cube...";
         glWidget->addCube();
     }
-    
     else if (selectedShape == "cylinder")
     {
         glWidget->addCylinder();
     }
-
+    else if (selectedShape == "revolution")
+    {
+        qDebug() << "Opening BezierWidget for revolution...";
+        BezierWidget* bezierWidget = new BezierWidget(); // No parent to make it a top-level window
+        bezierWidget->setAttribute(Qt::WA_DeleteOnClose); // Automatically delete when closed
+        bezierWidget->resize(800, 600); // Optional: Set a default size
+        bezierWidget->show();
+        update();
+    }
     else
     {
         QMessageBox::information(this, "Info", "Please select a valid shape.");

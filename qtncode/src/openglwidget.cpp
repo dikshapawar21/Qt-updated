@@ -19,7 +19,6 @@ void OpenGLWidget::initializeGL()
 {
     initializeOpenGLFunctions();
     glEnable(GL_DEPTH_TEST); // Enable depth testing for 3D rendering
-
 }
 
 void OpenGLWidget::paintGL()
@@ -67,12 +66,10 @@ void OpenGLWidget::paintGL()
     }
 
     if (shouldDrawBezier && bezier)
-
     {
         //qDebug() << "Drawing Bezier with" << bezier->getInterpolatedPoints().size() << "points";
         bezier->draw();
     }
-
 }
 
 void OpenGLWidget::resizeGL(int w, int h)
@@ -106,6 +103,7 @@ void OpenGLWidget::addSphere()
     shouldDrawSphere = true;
     update();
 }
+
 void OpenGLWidget::addCylinder()
 {
     delete cylinder;
@@ -126,7 +124,6 @@ void OpenGLWidget::addBezier()
     shouldDrawSphere = false;
     update();
     qDebug() << "addBezier called. Points:" << controlPoints.size()<< " Interpolated:" << interpolatedPoints;
-
 }
 
 void OpenGLWidget::addCube()
@@ -164,6 +161,11 @@ void OpenGLWidget::setBezierData(const std::vector<std::vector<double>>& points,
     update();
 }
 
+// QPointF OpenGLWidget::screenToWorld(const QPoint &mousePos) {
+//     float x = mousePos.x() - width() / 2;
+//     float y = (height() / 2) - mousePos.y();
+//     return QPointF(x, y);
+// }
 
 // ------------------------------------------- CUBE ------------------------------------------------------------------------
 // -------------------------------------------------------------------------------------------------------------------------
@@ -171,8 +173,10 @@ void OpenGLWidget::setBezierData(const std::vector<std::vector<double>>& points,
 void OpenGLWidget::mousePressEvent(QMouseEvent* event)
 {
     // Convert screen coordinates to world coordinates
-    auto [worldX, worldY] = screenToWorld(event->position().x(), event->position().y());
-
+    auto world = screenToWorld(event->position().toPoint().x(), event->position().toPoint().y());
+    float worldX = world.first;
+    float worldY = world.second;
+    
     if (shouldDrawBezier)
     {
         mousePressBezier(event);
@@ -188,12 +192,14 @@ void OpenGLWidget::mousePressEvent(QMouseEvent* event)
         update(); // Trigger repaint to show the points
     }
 
-
     if (!shouldDrawCube || !cube) return;
 
     if (cube->basePoints.size() < 4) {
         // Convert screen coordinates to world coordinates
-        auto [worldX, worldY] = screenToWorld(event->position().x(), event->position().y());
+        auto world = screenToWorld(event->position().toPoint().x(), event->position().toPoint().y());
+        float worldX = world.first;
+        float worldY = world.second;
+        
         cube->addBasePoint(Point(worldX, worldY, 0.0));
         qDebug() << "Added base point:" << worldX << worldY;
 
@@ -245,6 +251,18 @@ void OpenGLWidget::mouseReleaseEvent(QMouseEvent* event)
     }
 }
 
+void OpenGLWidget::extrudeCube(double height)
+{
+    if (shouldDrawCube && cube && cube->basePoints.size() >= 3) {
+        cube->updateExtrusion(height); // Update the extrusion height
+        cube->finalizeExtrusion();    // Build 3D edges
+        qDebug() << "Cube extruded to height:" << height;
+        update(); // Trigger repaint
+    } else {
+        qDebug() << "Cube is not ready for extrusion.";
+    }
+}
+
 // ----------------------------------------------BEZIER ------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------
 
@@ -265,16 +283,17 @@ std::pair<float, float> OpenGLWidget::screenToWorld(int x, int y)
 
 void OpenGLWidget::mousePressBezier(QMouseEvent* event)
 {
-    QPointF pos = event->position();
-    auto [wx, wy] = screenToWorld(pos.x(), pos.y());
+    auto world = screenToWorld(event->position().toPoint().x(), event->position().toPoint().y());
+    float worldX = world.first;
+    float worldY = world.second;
 
     const float tolerance = 5.0f;
     selectedPointIndex = -1;
 
     for (size_t i = 0; i < controlPoints.size(); ++i)
     {
-        float dx = wx - controlPoints[i][0];
-        float dy = wy - controlPoints[i][1];
+        float dx = worldX - controlPoints[i][0];
+        float dy = worldY - controlPoints[i][1];
         if (dx * dx + dy * dy < tolerance * tolerance)
         {
             selectedPointIndex = static_cast<int>(i);
@@ -288,25 +307,21 @@ void OpenGLWidget::mouseMoveBezier(QMouseEvent* event)
 {
     if (isDragging && selectedPointIndex != -1)
     {
-        QPointF pos = event->position();
-        auto [wx, wy] = screenToWorld(pos.x(), pos.y());
+        auto world = screenToWorld(event->position().toPoint().x(), event->position().toPoint().y());
+        float worldX = world.first;
+        float worldY = world.second;
 
-        controlPoints[selectedPointIndex][0] = wx;
-        controlPoints[selectedPointIndex][1] = wy;
+        controlPoints[selectedPointIndex][0] = worldX;
+        controlPoints[selectedPointIndex][1] = worldY;
 
         // Recreate the bezier curve with updated points
         delete bezier;
         bezier = new Bezier(controlPoints, interpolatedPoints);
-        
+
         update(); // Trigger repaint
         qDebug() << "Dragging" << selectedPointIndex;
-        
     }
-    //qDebug() << "Moved to:" << wx << wy;
-    qDebug() << "Updated point:" << controlPoints[selectedPointIndex];
 }
-
-
 
 void OpenGLWidget::mouseReleaseBezier(QMouseEvent* event)
 {
@@ -319,17 +334,4 @@ void OpenGLWidget::mouseReleaseBezier(QMouseEvent* event)
     bezier = new Bezier(controlPoints, interpolatedPoints);
 
     update();
-}
-
-
-void OpenGLWidget::extrudeCube(double height)
-{
-    if (shouldDrawCube && cube && cube->basePoints.size() >= 3) {
-        cube->updateExtrusion(height); // Update the extrusion height
-        cube->finalizeExtrusion();    // Build 3D edges
-        qDebug() << "Cube extruded to height:" << height;
-        update(); // Trigger repaint
-    } else {
-        qDebug() << "Cube is not ready for extrusion.";
-    }
 }
