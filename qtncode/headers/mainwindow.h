@@ -1,4 +1,3 @@
-// app.h
 #pragma once
 
 #include <QMainWindow>
@@ -22,7 +21,9 @@ public:
 private slots:
     void onAddShapeButtonClicked();
     void onAddBezierInput();
+    void onAddSphereRadius();
     void onExtrudeButtonClicked();
+    void onAddCylinderSpecs();
 
 private:
     OpenGLWidget* glWidget;

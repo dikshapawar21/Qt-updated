@@ -23,8 +23,8 @@ include_directories(${INCLUDE_DIRECTORIES})
  
 # Source files
 file(GLOB APPLICATION_SRC
-    ${CMAKE_SOURCE_DIR}/src/mainwindow.cpp
-    ${CMAKE_SOURCE_DIR}/headers/mainwindow.h
+    # ${CMAKE_SOURCE_DIR}/src/mainwindow.cpp
+    # ${CMAKE_SOURCE_DIR}/headers/mainwindow.h
     ${CMAKE_SOURCE_DIR}/src/*.cpp
     ${CMAKE_SOURCE_DIR}/headers/*.h
 )

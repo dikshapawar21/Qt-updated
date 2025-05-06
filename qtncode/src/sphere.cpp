@@ -2,14 +2,14 @@
 #include <GL/gl.h>
 #include <cmath>
 
-Sphere::Sphere(float radius, int slices, int stacks)
-    : radius(radius), slices(slices), stacks(stacks)
+Sphere::Sphere(float r, int slices, int stacks)
+    : radius(r), slices(slices), stacks(stacks)
 {
 }
 
 void Sphere::draw() const
 {
-    glColor3f(1.0f, 1.0f, 1.0f); // Set color to white for visibility
+    glColor3f(0.0f, 0.0f, 1.0f); // Set color to white for visibility
 
     // Draw lines of latitude (horizontal rings)
     for (int i = 1; i < stacks; ++i) {

@@ -3,7 +3,7 @@
 class Cylinder
 {
 public:
-    Cylinder(float radius = 30.0f, float height = 60.0f, int slices = 20, int stacks = 10);
+    Cylinder(float radius, float height, int slices, int stacks);
     void draw() const;
 
 private:

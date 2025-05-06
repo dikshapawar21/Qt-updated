@@ -28,8 +28,8 @@ void OpenGLWidget::paintGL()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     glTranslatef(0.0f, 0.0f, -200.0f); // Move the camera back
-    glRotatef(30.0f, 1.0f, 0.0f, 0.0f); // Rotate around the X-axis
-    glRotatef(45.0f, 0.0f, 1.0f, 0.0f); // Rotate around the Y-axis
+    glRotatef(90.0f, 1.0f, 0.0f, 0.0f); // Rotate around the X-axis
+    glRotatef(30.0f, 0.0f, 1.0f, 0.0f); // Rotate around the Y-axis
 
     glPointSize(5.0f);
     glColor3f(1.0f, 1.0f, 0.0f);
@@ -99,7 +99,7 @@ void OpenGLWidget::resizeGL(int w, int h)
 void OpenGLWidget::addSphere()
 {
     delete sphere;
-    sphere = new Sphere();
+    sphere = new Sphere(radsp, 20, 20);
     shouldDrawSphere = true;
     update();
 }
@@ -107,7 +107,7 @@ void OpenGLWidget::addSphere()
 void OpenGLWidget::addCylinder()
 {
     delete cylinder;
-    cylinder = new Cylinder();
+    cylinder = new Cylinder(radcy,htcy, 20,10);
     shouldDrawCylinder = true;
     update();
 }
@@ -160,6 +160,20 @@ void OpenGLWidget::setBezierData(const std::vector<std::vector<double>>& points,
     shouldDrawBezier = true;
     update();
 }
+
+void OpenGLWidget::setSphereRadius(float r){
+    radsp = r;
+    shouldDrawSphere = true;
+    update();
+}
+
+void OpenGLWidget::setCylinderSpecs(float r, float h){
+    radcy = r;
+    htcy = h;
+    shouldDrawCylinder = true;
+    update();
+}
+
 
 // QPointF OpenGLWidget::screenToWorld(const QPoint &mousePos) {
 //     float x = mousePos.x() - width() / 2;

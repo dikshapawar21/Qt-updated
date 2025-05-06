@@ -22,7 +22,7 @@ MainWindow::MainWindow(QWidget* parent)
 
     comboBox->addItems({"bezier", "sphere", "cube", "cylinder", "revolution"});
     layout->addWidget(comboBox);
-    
+
     pushButton = new QPushButton("Add Shape", this);
     layout->addWidget(pushButton);
 
@@ -73,6 +73,7 @@ void MainWindow::onAddShapeButtonClicked()
 
     if (selectedShape == "sphere")
     {
+        onAddSphereRadius();
         glWidget->addSphere();
     }
     else if (selectedShape == "bezier")
@@ -87,6 +88,7 @@ void MainWindow::onAddShapeButtonClicked()
     }
     else if (selectedShape == "cylinder")
     {
+        onAddCylinderSpecs();
         glWidget->addCylinder();
     }
     else if (selectedShape == "revolution")
@@ -129,5 +131,56 @@ void MainWindow::onAddBezierInput()
     if (glWidget)
     {
         glWidget->setBezierData(points, numInterpolated);
+    }
+}
+
+void MainWindow::onAddSphereRadius()
+{
+    bool ok;
+    float radius = QInputDialog::getDouble(
+        this,
+        "Sphere",
+        "Enter radius of sphere",
+        40.0,   
+        0.1,    
+        1000.0,
+        2,     
+        &ok 
+    );    if (!ok) return;
+    
+    if (glWidget)
+    {
+        glWidget->setSphereRadius(radius);
+    }
+}
+
+void MainWindow::onAddCylinderSpecs()
+{
+    bool ok;
+    float radius = QInputDialog::getDouble(
+        this,
+        "Cylinder",
+        "Enter radius of Cylinder",
+        40.0,   
+        0.1,    
+        1000.0,
+        2,     
+        &ok 
+    );    if (!ok) return;
+
+    float height = QInputDialog::getDouble(
+        this,
+        "Cylinder",
+        "Enter height of Cylinder",
+        80.0,   
+        0.1,    
+        1000.0,
+        2,     
+        &ok 
+    );    if (!ok) return;
+    
+    if (glWidget)
+    {
+        glWidget->setCylinderSpecs(radius,height);
     }
 }

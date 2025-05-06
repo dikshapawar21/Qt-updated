@@ -25,7 +25,10 @@ public:
     void addBezier();
     void addCube();
     void addCylinder();
+
     void setBezierData(const std::vector<std::vector<double>>& points, int numInterpolated);
+    void setSphereRadius(float r);
+    void setCylinderSpecs(float r, float h);
     void extrudeCube(double height);
     
 
@@ -44,6 +47,9 @@ private:
     std::vector<std::vector<double>> controlPoints;
     int interpolatedPoints = 0;
     int selectedPointIndex = -1;
+    float radsp;
+    float radcy;
+    float htcy;
 
     bool isDragging = false;
     QPoint startDragPos;

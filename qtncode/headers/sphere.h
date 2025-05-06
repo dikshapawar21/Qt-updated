@@ -5,7 +5,8 @@
 class Sphere
 {
 public:
-    Sphere(float radius = 30.0f, int slices = 20, int stacks = 20);
+
+    Sphere(float radius, int slices, int stacks);
 
     void draw() const;
 
