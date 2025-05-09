@@ -24,13 +24,21 @@ void OpenGLWidget::initializeGL()
 void OpenGLWidget::paintGL()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glTranslatef(0.0f, 0.0f, -200.0f); // Move the camera back
-    glRotatef(90.0f, 1.0f, 0.0f, 0.0f); // Rotate around the X-axis
-    glRotatef(30.0f, 0.0f, 1.0f, 0.0f); // Rotate around the Y-axis
+    glColor3f(0.1f,1.0f,0.0f);
+    //new
+    //glTranslatef(0.0f, 0.0f, -100.0f);
 
+    //glRotatef(30.0f, 1.0f, 0.0f, 0.0f);
+    //glRotatef(45.0f, 0.0f, 1.0f, 0.0f);
+
+    glTranslatef(0.0f, 0.0f, -200.0f); // Move the camera back
+    glRotatef(30.0f, 1.0f, 0.0f, 0.0f); // Rotate around the X-axis
+    glRotatef(45.0f, 0.0f, 1.0f, 0.0f); // Rotate around the Y-axis
+
+    glPointSize(5.0f); // Set point size
+    glColor3f(1.0f, 1.0f, 0.0f); // Set point color to yellow
     glPointSize(5.0f);
     glColor3f(1.0f, 1.0f, 0.0f);
 
