@@ -11,4 +11,5 @@ private:
     float height;
     int slices;
     int stacks;
+
 };

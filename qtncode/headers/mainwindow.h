@@ -9,6 +9,7 @@
 #include <QVBoxLayout>
 #include "openglwidget.h"
 #include "revolvebezier.h"
+#include "glwidget.h"
 
 class MainWindow : public QMainWindow
 {
