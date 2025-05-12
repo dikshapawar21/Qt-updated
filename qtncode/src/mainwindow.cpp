@@ -176,12 +176,44 @@ void MainWindow::onAddShapeButtonClicked()
         if (!ok)
             return;
 
-        GLWidget *glwidget = new GLWidget(); // No parent: standalone window
+        QWidget *container = new QWidget;
+        QVBoxLayout *layout = new QVBoxLayout(container);
+
+        GLWidget *glwidget = new GLWidget();
+        QPushButton *btn = new QPushButton("Boolean Operation");
+
+        layout->addWidget(glwidget);
+        layout->addWidget(btn);
+
         glwidget->setAttribute(Qt::WA_DeleteOnClose);
         glwidget->resize(800, 600);
+
         glwidget->setCircleData(cx, cy, radius);
         glwidget->setRectangleData(x, y, length, width);
-        glwidget->show();
+
+        container->setLayout(layout);
+        container->resize(800, 650);
+        container->show();
+
+        // Connect button to boolean operation dialog
+        connect(btn, &QPushButton::clicked, this, [=]()
+        {
+            QStringList options = {"Union", "Intersection", "Subtraction"};
+            bool okOp;
+            QString selectedOp = QInputDialog::getItem(container, "Boolean Operation", "Select operation:", options, 0, false, &okOp);
+
+        if (okOp) {
+        if (selectedOp == "Union")
+            glwidget->computeUnion();
+        else if (selectedOp == "Intersection")
+            glwidget->computeIntersection();
+        else if (selectedOp == "Subtraction")
+            glwidget->computeSubtraction();
+
+        glwidget->update();  // trigger redraw if needed
+    }
+        
+    });
     }
 
     else

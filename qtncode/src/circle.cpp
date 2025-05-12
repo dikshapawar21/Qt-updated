@@ -13,7 +13,7 @@ void Circle::draw() {
     glColor3f(0.0f, 0.0f, 1.0f);
     glBegin(GL_LINE_LOOP);
 
-    points.clear(); // Clear any previously stored points
+    points.clear(); 
 
     for (int i = 0; i < segments; ++i) {
         float angle = i * angle_increment;
@@ -26,3 +26,5 @@ void Circle::draw() {
     glEnd();
 
 }
+
+
