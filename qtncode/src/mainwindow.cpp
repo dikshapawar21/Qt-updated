@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     comboBox = new QComboBox(this);
     comboBox->setPlaceholderText("Select Shape");
 
-    comboBox->addItems({"Bezier", "Sphere", "Cube", "Cylinder", "Revolution", "Circle", "Rectangle", "Intersect"});
+    comboBox->addItems({"Bezier", "Sphere", "Cube", "Cylinder", "Revolution", "Circle", "Rectangle", "twod"});
     layout->addWidget(comboBox);
 
     pushButton = new QPushButton("Add Shape", this);
@@ -146,20 +146,20 @@ void MainWindow::onAddShapeButtonClicked()
         glwidget->show();
     }
 
-    else if (selectedShape == "Intersect")
+    else if (selectedShape == "twod")
     {
         bool ok;
-        float cx = QInputDialog::getDouble(this, "Circle Center X", "Enter X coordinate of center:", 0.0, -1000.0, 1000.0, 2, &ok);
+        float cx = QInputDialog::getDouble(this, "Rectangle1 Center X", "Enter X coordinate of center:", 0.0, -1000.0, 1000.0, 2, &ok);
         if (!ok)
             return;
 
-        float cy = QInputDialog::getDouble(this, "Circle Center Y", "Enter Y coordinate of center:", 0.0, -1000.0, 1000.0, 2, &ok);
+        float cy = QInputDialog::getDouble(this, "Rectangle Center Y", "Enter Y coordinate of center:", 0.0, -1000.0, 1000.0, 2, &ok);
         if (!ok)
             return;
 
-        float radius = QInputDialog::getDouble(this, "Circle Radius", "Enter radius of the circle:", 30.0, 0.1, 1000.0, 2, &ok);
-        if (!ok)
-            return;
+        // float radius = QInputDialog::getDouble(this, "Circle Radius", "Enter radius of the circle:", 30.0, 0.1, 1000.0, 2, &ok);
+        // if (!ok)
+        //     return;
 
         float x = QInputDialog::getDouble(this, "Rectangle Center X", "Enter X coordinate:", 0.0, -1000.0, 1000.0, 2, &ok);
         if (!ok)
@@ -188,7 +188,8 @@ void MainWindow::onAddShapeButtonClicked()
         glwidget->setAttribute(Qt::WA_DeleteOnClose);
         glwidget->resize(800, 600);
 
-        glwidget->setCircleData(cx, cy, radius);
+        //glwidget->setCircleData(cx, cy, radius);
+        glwidget->setRectangleData(cx, cy, length, width);
         glwidget->setRectangleData(x, y, length, width);
 
         container->setLayout(layout);

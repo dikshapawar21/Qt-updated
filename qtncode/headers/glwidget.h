@@ -30,10 +30,12 @@ private:
     bool drawCircle = false;
 
     Rectangle rectangle;
+
     bool drawRectangle = false;
 
     bool showResult = false;
 
+    std::vector<Rectangle> rectangles;
     std::vector<std::vector<float>> resultShape;
 };
 
