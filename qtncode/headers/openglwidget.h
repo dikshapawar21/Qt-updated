@@ -14,7 +14,7 @@ class OpenGLWidget : public QOpenGLWidget, protected QOpenGLFunctions
     Q_OBJECT
 
 public:
-    OpenGLWidget(QWidget* parent = nullptr);
+    OpenGLWidget(QWidget *parent = nullptr);
     ~OpenGLWidget();
 
     void initializeGL() override;
@@ -26,17 +26,18 @@ public:
     void addCube();
     void addCylinder();
 
-    void setBezierData(const std::vector<std::vector<double>>& points, int numInterpolated);
+    void setBezierData(const std::vector<std::vector<double>> &points, int numInterpolated);
+    void setTwoBeziers(const std::vector<std::vector<double>> &points1, int numInterp1,
+                       const std::vector<std::vector<double>> &points2, int numInterp2);
     void setSphereRadius(float r);
     void setCylinderSpecs(float r, float h);
     void extrudeCube(double height);
-    
 
 private:
-    Sphere* sphere = nullptr;
-    Bezier* bezier = nullptr;
-    Cube* cube = nullptr;
-    Cylinder* cylinder = nullptr;
+    Sphere *sphere = nullptr;
+    Bezier *bezier = nullptr;
+    Cube *cube = nullptr;
+    Cylinder *cylinder = nullptr;
 
     bool shouldDrawSphere = false;
     bool shouldDrawBezier = false;
@@ -55,18 +56,22 @@ private:
     QPoint startDragPos;
 
     std::vector<Point> tempVertices; // Temporary vertices for the polygon
-    std::pair<float, float> screenToWorld(int x, int y);
-    //QPointF screenToWorld(const QPoint &pos);
+   
+    std::vector<std::vector<double>> bezier1Points;
+    int bezier1Interp = 0;
+    std::vector<std::vector<double>> bezier2Points;
+    int bezier2Interp = 0;
+    std::vector<std::vector<double>> intersectionPoints;
+    bool shouldDrawTwoBeziers = false;
 
-    protected:
-    // Cube Events
+    bool set3DAngle = false;
+
+    int draggedPointIndex = -1;
+    QPointF mapToOpenGLCoordinates(const QPoint &mousePos);
+
+protected:
     void mousePressEvent(QMouseEvent* event) override;
     void mouseMoveEvent(QMouseEvent* event) override;
     void mouseReleaseEvent(QMouseEvent* event) override;
-
-    //Bezier Events
-    void mousePressBezier(QMouseEvent* event);
-    void mouseMoveBezier(QMouseEvent* event);
-    void mouseReleaseBezier(QMouseEvent* event);
 
 };

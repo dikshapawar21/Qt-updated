@@ -76,7 +76,7 @@ QPointF BezierWidget::mapToOpenGLCoordinates(const QPoint &mousePos) {
     float y = (height() / 2) - mousePos.y();
     return QPointF(x, y);
 }
- 
+     
 void BezierWidget::mousePressEvent(QMouseEvent *event) {
     QPointF mapped = mapToOpenGLCoordinates(event->pos());
     if (event->button() == Qt::LeftButton) {

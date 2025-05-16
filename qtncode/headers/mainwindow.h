@@ -25,6 +25,7 @@ private slots:
     void onAddSphereRadius();
     void onExtrudeButtonClicked();
     void onAddCylinderSpecs();
+    void onAddBezierIntersection();
 
 private:
     OpenGLWidget* glWidget;

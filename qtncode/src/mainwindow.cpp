@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     comboBox = new QComboBox(this);
     comboBox->setPlaceholderText("Select Shape");
 
-    comboBox->addItems({"Bezier", "Sphere", "Cube", "Cylinder", "Revolution", "Circle", "Rectangle", "twod"});
+    comboBox->addItems({"Bezier", "Sphere", "Cube", "Cylinder", "Revolution", "Circle", "Rectangle", "twod", "BI"});
     layout->addWidget(comboBox);
 
     pushButton = new QPushButton("Add Shape", this);
@@ -47,7 +47,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::onExtrudeButtonClicked()
 {
-    if (selectedShape == "cube" && glWidget)
+    if (selectedShape == "Cube" && glWidget)
     {
         bool ok;
         double height = QInputDialog::getDouble(this, "Extrusion Height", "Enter height to extrude:", 50.0, 1.0, 1000.0, 2, &ok);
@@ -89,6 +89,10 @@ void MainWindow::onAddShapeButtonClicked()
     {
         onAddCylinderSpecs();
         glWidget->addCylinder();
+    }
+    else if (selectedShape == "BI")
+    {
+        onAddBezierIntersection();
     }
     else if (selectedShape == "Revolution")
     {
@@ -188,7 +192,7 @@ void MainWindow::onAddShapeButtonClicked()
         glwidget->setAttribute(Qt::WA_DeleteOnClose);
         glwidget->resize(800, 600);
 
-        //glwidget->setCircleData(cx, cy, radius);
+        // glwidget->setCircleData(cx, cy, radius);
         glwidget->setRectangleData(cx, cy, length, width);
         glwidget->setRectangleData(x, y, length, width);
 
@@ -198,23 +202,22 @@ void MainWindow::onAddShapeButtonClicked()
 
         // Connect button to boolean operation dialog
         connect(btn, &QPushButton::clicked, this, [=]()
-        {
-            QStringList options = {"Union", "Intersection", "Subtraction"};
-            bool okOp;
-            QString selectedOp = QInputDialog::getItem(container, "Boolean Operation", "Select operation:", options, 0, false, &okOp);
+                {
+                    QStringList options = {"Union", "Intersection", "Subtraction"};
+                    bool okOp;
+                    QString selectedOp = QInputDialog::getItem(container, "Boolean Operation", "Select operation:", options, 0, false, &okOp);
 
-        if (okOp) {
-        if (selectedOp == "Union")
-            glwidget->computeUnion();
-        else if (selectedOp == "Intersection")
-            glwidget->computeIntersection();
-        else if (selectedOp == "Subtraction")
-            glwidget->computeSubtraction();
+                    if (okOp)
+                    {
+                        if (selectedOp == "Union")
+                            glwidget->computeUnion();
+                        else if (selectedOp == "Intersection")
+                            glwidget->computeIntersection();
+                        else if (selectedOp == "Subtraction")
+                            glwidget->computeSubtraction();
 
-        glwidget->update();  // trigger redraw if needed
-    }
-        
-    });
+                        glwidget->update(); // trigger redraw if needed
+                    } });
     }
 
     else
@@ -222,6 +225,53 @@ void MainWindow::onAddShapeButtonClicked()
         QMessageBox::information(this, "Info", "Please select a valid shape.");
     }
 }
+void MainWindow::onAddBezierIntersection()
+{
+    // Collect control points for first Bezier
+    bool ok;
+    int numControl1 = QInputDialog::getInt(this, "Bezier 1", "Enter number of control points:", 3, 2, 10, 1, &ok);
+    if (!ok)
+        return;
+    std::vector<std::vector<double>> points1;
+    for (int i = 0; i < numControl1; ++i)
+    {
+        double x = QInputDialog::getDouble(this, "Bezier 1", QString("Enter X for point %1:").arg(i + 1), 0, -1000, 1000, 2, &ok);
+        if (!ok)
+            return;
+        double y = QInputDialog::getDouble(this, "Bezier 1", QString("Enter Y for point %1:").arg(i + 1), 0, -1000, 1000, 2, &ok);
+        if (!ok)
+            return;
+        points1.push_back({x, y});
+    }
+    int numInterpolated1 = QInputDialog::getInt(this, "Bezier 1", "Enter number of interpolated points:", 50, 1, 1000, 1, &ok);
+    if (!ok)
+        return;
+
+    // Collect control points for second Bezier
+    int numControl2 = QInputDialog::getInt(this, "Bezier 2", "Enter number of control points:", 3, 2, 10, 1, &ok);
+    if (!ok)
+        return;
+    std::vector<std::vector<double>> points2;
+    for (int i = 0; i < numControl2; ++i)
+    {
+        double x = QInputDialog::getDouble(this, "Bezier 2", QString("Enter X for point %1:").arg(i + 1), 0, -1000, 1000, 2, &ok);
+        if (!ok)
+            return;
+        double y = QInputDialog::getDouble(this, "Bezier 2", QString("Enter Y for point %1:").arg(i + 1), 0, -1000, 1000, 2, &ok);
+        if (!ok)
+            return;
+        points2.push_back({x, y});
+    }
+    int numInterpolated2 = QInputDialog::getInt(this, "Bezier 2", "Enter number of interpolated points:", 50, 1, 1000, 1, &ok);
+    if (!ok)
+        return;
+
+    if (glWidget)
+    {
+        glWidget->setTwoBeziers(points1, numInterpolated1, points2, numInterpolated2);
+    }
+}
+
 
 void MainWindow::onAddBezierInput()
 {
