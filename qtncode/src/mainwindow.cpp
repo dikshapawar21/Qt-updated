@@ -20,7 +20,7 @@ MainWindow::MainWindow(QWidget *parent)
     comboBox = new QComboBox(this);
     comboBox->setPlaceholderText("Select Shape");
 
-    comboBox->addItems({"Bezier", "Sphere", "Cube", "Cylinder", "Revolution", "Circle", "Rectangle", "twod", "BI"});
+    comboBox->addItems({"Bezier", "Sphere", "Cube", "Cylinder", "Revolution", "Circle", "Rectangle", "Boolean operations", "Bezier Intersection"});
     layout->addWidget(comboBox);
 
     pushButton = new QPushButton("Add Shape", this);
@@ -90,7 +90,7 @@ void MainWindow::onAddShapeButtonClicked()
         onAddCylinderSpecs();
         glWidget->addCylinder();
     }
-    else if (selectedShape == "BI")
+    else if (selectedShape == "Bezier Intersection")
     {
         onAddBezierIntersection();
     }
@@ -150,7 +150,7 @@ void MainWindow::onAddShapeButtonClicked()
         glwidget->show();
     }
 
-    else if (selectedShape == "twod")
+    else if (selectedShape == "Boolean operations")
     {
         bool ok;
         float cx = QInputDialog::getDouble(this, "Rectangle1 Center X", "Enter X coordinate of center:", 0.0, -1000.0, 1000.0, 2, &ok);

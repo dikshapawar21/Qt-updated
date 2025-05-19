@@ -4,7 +4,7 @@
 #include <GL/gl.h>
 #include <QMouseEvent>
 
-OpenGLWidget::OpenGLWidget(QWidget* parent)
+OpenGLWidget::OpenGLWidget(QWidget *parent)
     : QOpenGLWidget(parent)
 {
 }
@@ -27,43 +27,50 @@ void OpenGLWidget::paintGL()
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glColor3f(0.1f,1.0f,0.0f);
+    glColor3f(0.1f, 1.0f, 0.0f);
 
-    // if (shouldDrawCube || shouldDrawSphere || shouldDrawCylinder) {
-    //     glTranslatef(0.0f, 0.0f, -200.0f);
-    //     glRotatef(30.0f, 1.0f, 0.0f, 0.0f);
-    //     glRotatef(45.0f, 0.0f, 1.0f, 0.0f);
-    // }
+    if (shouldDrawSphere || shouldDrawCylinder)
+    {
+        glTranslatef(0.0f, 0.0f, -200.0f);
+        glRotatef(30.0f, 1.0f, 0.0f, 0.0f);
+        glRotatef(45.0f, 0.0f, 1.0f, 0.0f);
+    }
 
-    if(set3DAngle){
+    if (set3DAngle)
+    {
         glTranslatef(0.0f, 0.0f, -200.0f);
         glRotatef(30.0f, 1.0f, 0.0f, 0.0f);
         glRotatef(30.0f, 0.0f, 1.0f, 0.0f);
     }
 
-    glPointSize(5.0f); // Set point size
+    glPointSize(5.0f);           // Set point size
     glColor3f(1.0f, 1.0f, 0.0f); // Set point color to yellow
     glPointSize(5.0f);
     glColor3f(1.0f, 1.0f, 0.0f);
 
     // Draw temporary vertices
-    if (!tempVertices.empty()) {
+    if (!tempVertices.empty())
+    {
         glBegin(GL_POINTS);
-        for (const auto& vertex : tempVertices) {
+        for (const auto &vertex : tempVertices)
+        {
             glVertex3f(vertex.getX(), vertex.getY(), vertex.getZ());
         }
         glEnd();
 
         // Draw lines between the vertices
         glBegin(GL_LINE_LOOP);
-        for (const auto& vertex : tempVertices) {
+        for (const auto &vertex : tempVertices)
+        {
             glVertex3f(vertex.getX(), vertex.getY(), vertex.getZ());
         }
         glEnd();
     }
 
     // Draw the cube (2D face or 3D shape)
-    if (shouldDrawCube && cube) {
+    if (shouldDrawCube && cube)
+    {
+        shouldDrawBezier = false;
         cube->draw();
     }
 
@@ -79,44 +86,49 @@ void OpenGLWidget::paintGL()
 
     if (shouldDrawBezier && bezier)
     {
-        //qDebug() << "Drawing Bezier with" << bezier->getInterpolatedPoints().size() << "points";
+        shouldDrawCube = false;
+        // qDebug() << "Drawing Bezier with" << bezier->getInterpolatedPoints().size() << "points";
         bezier->draw();
     }
-    if (shouldDrawTwoBeziers) {
-    // Draw first Bezier (red)
-    Bezier b1(bezier1Points, bezier1Interp);
-    glColor3f(1.0f, 0.0f, 0.0f);
-    b1.draw();
+    if (shouldDrawTwoBeziers)
+    {
+        shouldDrawCube = false;
+        // Draw first Bezier (red)
+        Bezier b1(bezier1Points, bezier1Interp);
+        glColor3f(1.0f, 0.0f, 0.0f);
+        b1.draw();
 
-    // Draw second Bezier (blue)
-    Bezier b2(bezier2Points, bezier2Interp);
-    glColor3f(0.0f, 0.0f, 1.0f);
-    b2.draw();
+        // Draw second Bezier (blue)
+        Bezier b2(bezier2Points, bezier2Interp);
+        glColor3f(0.0f, 0.0f, 1.0f);
+        b2.draw();
 
-    // Draw intersection points: white border + cyan inner point
-    for (const auto& pt : intersectionPoints) {
-        // Draw white border
-        glPointSize(14.0f);
-        glColor3f(1.0f, 1.0f, 1.0f);
-        glBegin(GL_POINTS);
-        glVertex3f(pt[0], pt[1], 0.0f);
-        glEnd();
+        // Draw intersection points: white border + cyan inner point
+        for (const auto &pt : intersectionPoints)
+        {
+            // Draw white border
+            glPointSize(14.0f);
+            glColor3f(1.0f, 1.0f, 1.0f);
+            glBegin(GL_POINTS);
+            glVertex3f(pt[0], pt[1], 0.0f);
+            glEnd();
 
-        // Draw cyan inner point
-        glPointSize(8.0f);
-        glColor3f(0.0f, 1.0f, 1.0f); // Cyan for intersection
-        glBegin(GL_POINTS);
-        glVertex3f(pt[0], pt[1], 0.0f);
-        glEnd();
+            // Draw cyan inner point
+            glPointSize(8.0f);
+            glColor3f(0.0f, 1.0f, 1.0f); // Cyan for intersection
+            glBegin(GL_POINTS);
+            glVertex3f(pt[0], pt[1], 0.0f);
+            glEnd();
+        }
     }
 }
-}
 
-void OpenGLWidget::resizeGL(int w, int h) {
+void OpenGLWidget::resizeGL(int w, int h)
+{
     glViewport(0, 0, w, h);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
-    glOrtho(-width()/2, width()/2, -height()/2, height()/2, -500, 500);
+    glOrtho(-width() / 2, width() / 2, -height() / 2, height() / 2, -500, 500);
     glMatrixMode(GL_MODELVIEW);
 }
 
@@ -131,14 +143,15 @@ void OpenGLWidget::addSphere()
 void OpenGLWidget::addCylinder()
 {
     delete cylinder;
-    cylinder = new Cylinder(radcy,htcy, 20,10);
+    cylinder = new Cylinder(radcy, htcy, 20, 10);
     shouldDrawCylinder = true;
     update();
 }
 
 void OpenGLWidget::addBezier()
 {
-    if (!controlPoints.empty() && interpolatedPoints > 0) {
+    if (!controlPoints.empty() && interpolatedPoints > 0)
+    {
         qDebug() << "Rebuilding Bezier...";
         delete bezier; // Delete the old object if it exists
         bezier = new Bezier(controlPoints, interpolatedPoints);
@@ -147,12 +160,13 @@ void OpenGLWidget::addBezier()
     shouldDrawCube = false; // Disable cube functionality
     shouldDrawSphere = false;
     update();
-    qDebug() << "addBezier called. Points:" << controlPoints.size()<< " Interpolated:" << interpolatedPoints;
+    qDebug() << "addBezier called. Points:" << controlPoints.size() << " Interpolated:" << interpolatedPoints;
 }
 
 void OpenGLWidget::addCube()
 {
-    if (tempVertices.size() < 3) {
+    if (tempVertices.size() < 3)
+    {
         qDebug() << "At least 3 vertices are required to create a polygon.";
         return;
     }
@@ -161,7 +175,8 @@ void OpenGLWidget::addCube()
     cube = new Cube();
 
     // Use the collected vertices as the base points
-    for (const auto& vertex : tempVertices) {
+    for (const auto &vertex : tempVertices)
+    {
         cube->addBasePoint(vertex);
     }
     shouldDrawCube = true;
@@ -174,7 +189,7 @@ void OpenGLWidget::addCube()
     update();
 }
 
-void OpenGLWidget::setBezierData(const std::vector<std::vector<double>>& points, int numInterpolated)
+void OpenGLWidget::setBezierData(const std::vector<std::vector<double>> &points, int numInterpolated)
 {
 
     controlPoints = points;
@@ -183,21 +198,23 @@ void OpenGLWidget::setBezierData(const std::vector<std::vector<double>>& points,
     update();
 }
 
-void OpenGLWidget::setSphereRadius(float r){
+void OpenGLWidget::setSphereRadius(float r)
+{
     radsp = r;
     shouldDrawSphere = true;
     update();
 }
 
-void OpenGLWidget::setCylinderSpecs(float r, float h){
+void OpenGLWidget::setCylinderSpecs(float r, float h)
+{
     radcy = r;
     htcy = h;
     shouldDrawCylinder = true;
     update();
 }
 
-void OpenGLWidget::setTwoBeziers(const std::vector<std::vector<double>>& points1, int numInterp1,
-                                 const std::vector<std::vector<double>>& points2, int numInterp2)
+void OpenGLWidget::setTwoBeziers(const std::vector<std::vector<double>> &points1, int numInterp1,
+                                 const std::vector<std::vector<double>> &points2, int numInterp2)
 {
     bezier1Points = points1;
     bezier1Interp = numInterp1;
@@ -213,61 +230,76 @@ void OpenGLWidget::setTwoBeziers(const std::vector<std::vector<double>>& points1
     intersectionPoints.clear();
     std::vector<std::vector<double>> curve1, curve2;
     Bezier b1(points1, numInterp1), b2(points2, numInterp2);
-    for (int i = 0; i <= numInterp1; ++i) {
+    for (int i = 0; i <= numInterp1; ++i)
+    {
         double t = static_cast<double>(i) / numInterp1;
         curve1.push_back(b1.deCasteljau(t));
     }
-    for (int i = 0; i <= numInterp2; ++i) {
+    for (int i = 0; i <= numInterp2; ++i)
+    {
         double t = static_cast<double>(i) / numInterp2;
         curve2.push_back(b2.deCasteljau(t));
     }
     double tol = 2.0; // intersection tolerance
-    for (const auto& p1 : curve1) {
-        for (const auto& p2 : curve2) {
+    for (const auto &p1 : curve1)
+    {
+        for (const auto &p2 : curve2)
+        {
             double dx = p1[0] - p2[0];
             double dy = p1[1] - p2[1];
-            if (dx * dx + dy * dy < tol * tol) {
+            if (dx * dx + dy * dy < tol * tol)
+            {
                 // Avoid duplicate intersection points
                 bool alreadyExists = false;
-                for (const auto& ipt : intersectionPoints) {
-                    double ddx = ipt[0] - (p1[0]+p2[0])/2;
-                    double ddy = ipt[1] - (p1[1]+p2[1])/2;
-                    if (ddx*ddx + ddy*ddy < 0.5*0.5) { // tighter tolerance for duplicates
+                for (const auto &ipt : intersectionPoints)
+                {
+                    double ddx = ipt[0] - (p1[0] + p2[0]) / 2;
+                    double ddy = ipt[1] - (p1[1] + p2[1]) / 2;
+                    if (ddx * ddx + ddy * ddy < 0.5 * 0.5)
+                    { // tighter tolerance for duplicates
                         alreadyExists = true;
                         break;
                     }
                 }
                 if (!alreadyExists)
-                    intersectionPoints.push_back({(p1[0]+p2[0])/2, (p1[1]+p2[1])/2});
+                    intersectionPoints.push_back({(p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2});
             }
         }
     }
     update();
 }
 
-
 void OpenGLWidget::extrudeCube(double height)
 {
-    if (shouldDrawCube && cube && cube->basePoints.size() >= 3) {
+    if (shouldDrawCube && cube && cube->basePoints.size() >= 3)
+    {
         cube->updateExtrusion(height); // Update the extrusion height
-        cube->finalizeExtrusion();    // Build 3D edges
+        cube->finalizeExtrusion();     // Build 3D edges
         qDebug() << "Cube extruded to height:" << height;
-        set3DAngle= true;
+        set3DAngle = true;
         update(); // Trigger repaint
-    } else {
+    }
+    else
+    {
         qDebug() << "Cube is not ready for extrusion.";
     }
 }
 
 // Helper to map mouse position to OpenGL coordinates
-QPointF OpenGLWidget::mapToOpenGLCoordinates(const QPoint &mousePos) {
+QPointF OpenGLWidget::mapToOpenGLCoordinates(const QPoint &mousePos)
+{
     float x = mousePos.x() - width() / 2;
     float y = height() / 2 - mousePos.y();
     return QPointF(x, y);
 }
 
-
 void OpenGLWidget::mousePressEvent(QMouseEvent *event) {
+    if (shouldDrawBezier)
+    {
+        bezierMousePressEvent(event);
+        return;
+    }
+    
     QPointF mapped = mapToOpenGLCoordinates(event->pos());
     if (event->button() == Qt::LeftButton) {
         // Add a new base point for the cube
@@ -288,6 +320,11 @@ void OpenGLWidget::mousePressEvent(QMouseEvent *event) {
 }
 
 void OpenGLWidget::mouseMoveEvent(QMouseEvent *event) {
+    if (shouldDrawBezier)
+    {
+        bezierMouseMoveEvent(event);
+        return;
+    }
     if (draggedPointIndex != -1) {
         QPointF mapped = mapToOpenGLCoordinates(event->pos());
         tempVertices[draggedPointIndex].setX(mapped.x());
@@ -296,6 +333,68 @@ void OpenGLWidget::mouseMoveEvent(QMouseEvent *event) {
     }
 }
 
-void OpenGLWidget::mouseReleaseEvent(QMouseEvent *) {
+void OpenGLWidget::mouseReleaseEvent(QMouseEvent *event) {
+    if (shouldDrawBezier)
+    {
+        bezierMouseReleaseEvent(event);
+        return;
+    }
+    draggedPointIndex = -1;
+}
+
+// --- Bezier interactive editing ---
+
+void OpenGLWidget::bezierMousePressEvent(QMouseEvent *event)
+{
+    if (!shouldDrawBezier)
+        return; 
+
+    QPointF mapped = mapToOpenGLCoordinates(event->pos());
+    if (event->button() == Qt::LeftButton)
+    {
+        // Add a new control point
+        controlPoints.push_back({mapped.x(), mapped.y()});
+        // Rebuild the Bezier curve
+        delete bezier;
+        bezier = new Bezier(controlPoints, interpolatedPoints);
+        update();
+    }
+    else if (event->button() == Qt::RightButton)
+    {
+        // Select a control point for dragging
+        draggedPointIndex = -1;
+        for (int i = 0; i < static_cast<int>(controlPoints.size()); ++i)
+        {
+            double dx = mapped.x() - controlPoints[i][0];
+            double dy = mapped.y() - controlPoints[i][1];
+            if (std::sqrt(dx * dx + dy * dy) < 10.0)
+            {
+                draggedPointIndex = i;
+                break;
+            }
+        }
+    }
+}
+
+void OpenGLWidget::bezierMouseMoveEvent(QMouseEvent *event)
+{
+    if (!shouldDrawBezier)
+        return;
+    if (draggedPointIndex != -1)
+    {
+        QPointF mapped = mapToOpenGLCoordinates(event->pos());
+        controlPoints[draggedPointIndex][0] = mapped.x();
+        controlPoints[draggedPointIndex][1] = mapped.y();
+        
+        delete bezier;
+        bezier = new Bezier(controlPoints, interpolatedPoints);
+        update();
+    }
+}
+
+void OpenGLWidget::bezierMouseReleaseEvent(QMouseEvent *)
+{
+    if (!shouldDrawBezier)
+        return;
     draggedPointIndex = -1;
 }
