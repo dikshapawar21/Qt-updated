@@ -7,9 +7,12 @@
 #include <QOpenGLWidget>
 #include <QMessageBox>
 #include <QVBoxLayout>
+#include <QHBoxLayout>
+#include <QFileDialog>
 #include "openglwidget.h"
 #include "revolvebezier.h"
 #include "glwidget.h"
+#include "stlwidget.h"
 
 class MainWindow : public QMainWindow
 {
@@ -27,6 +30,9 @@ private slots:
     void onAddCylinderSpecs();
     void onAddBezierIntersection();
 
+    void onImportSTL();
+    void onFindIntersection();
+
 private:
     OpenGLWidget* glWidget;
     BezierWidget* bezierWidget;
@@ -34,4 +40,8 @@ private:
     QPushButton* extrudeButton;
     QComboBox* comboBox;
     QString selectedShape = "";
+
+    QPushButton *importButton;
+    QPushButton *intersectionButton;
+    STLWidget* stlwidget;
 };

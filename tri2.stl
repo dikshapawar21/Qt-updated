@@ -1,0 +1,9 @@
+solid tri2
+  facet normal 0.0 0.0 0.0
+    outer loop
+      vertex 0.25 0.25 -0.5
+      vertex 0.75 0.25 1.0
+      vertex 0.5 0.75 0.5
+    endloop
+  endfacet
+endsolid tri2

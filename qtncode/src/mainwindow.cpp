@@ -3,6 +3,9 @@
 #include "sphere.h"
 #include "bezier.h"
 #include "cylinder.h"
+#include "intersection.h"
+#include "stlwidget.h"
+#include "stlparser.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -20,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent)
     comboBox = new QComboBox(this);
     comboBox->setPlaceholderText("Select Shape");
 
-    comboBox->addItems({"Bezier", "Sphere", "Cube", "Cylinder", "Revolution", "Circle", "Rectangle", "Boolean operations", "Bezier Intersection"});
+    comboBox->addItems({"Bezier", "Sphere", "Cube", "Cylinder", "Revolution", "Circle", "Rectangle", "Boolean operations", "Bezier Intersection", "STL-STL Intersection"});
     layout->addWidget(comboBox);
 
     pushButton = new QPushButton("Add Shape", this);
@@ -101,6 +104,34 @@ void MainWindow::onAddShapeButtonClicked()
         bezierWidget->setAttribute(Qt::WA_DeleteOnClose); // Automatically delete when closed
         bezierWidget->resize(800, 600);                   // Optional: Set a default size
         bezierWidget->show();
+        update();
+    }
+    else if (selectedShape == "STL-STL Intersection")
+    {
+
+        QWidget *centralWidget = new QWidget(this);
+        QHBoxLayout *layout = new QHBoxLayout(centralWidget);
+
+        importButton = new QPushButton("Import STL File", this);
+        intersectionButton = new QPushButton("Intersect Shapes", this);
+        stlwidget = new STLWidget(this);
+
+        // Create a vertical layout for the buttons
+        QVBoxLayout *buttonLayout = new QVBoxLayout();
+        buttonLayout->addWidget(importButton);
+        buttonLayout->addWidget(intersectionButton);
+
+        layout->addWidget(stlwidget, 1);
+        layout->addLayout(buttonLayout); // Add the vertical layout to the horizontal layout
+
+        setCentralWidget(centralWidget);
+
+        connect(importButton, &QPushButton::clicked, this, &MainWindow::onImportSTL);
+        connect(intersectionButton, &QPushButton::clicked, this, &MainWindow::onFindIntersection);
+
+        stlwidget->setAttribute(Qt::WA_DeleteOnClose);
+        stlwidget->resize(800, 600);
+        stlwidget->show();
         update();
     }
     else if (selectedShape == "Circle")
@@ -272,7 +303,6 @@ void MainWindow::onAddBezierIntersection()
     }
 }
 
-
 void MainWindow::onAddBezierInput()
 {
     bool ok;
@@ -357,4 +387,40 @@ void MainWindow::onAddCylinderSpecs()
     {
         glWidget->setCylinderSpecs(radius, height);
     }
+}
+
+void MainWindow::onImportSTL()
+{
+    static bool loadToA = true;
+    QString fileName = QFileDialog::getOpenFileName(this, "Open STL File", "", "STL Files (*.stl)");
+    if (!fileName.isEmpty())
+    {
+        std::vector<Triangle> tris;
+        if (loadSTLFile(fileName.toStdString(), tris))
+        {
+            if (loadToA)
+            {
+                trianglesA = tris;
+                QMessageBox::information(this, "Import STL", "Loaded as A: " + fileName);
+            }
+            else
+            {
+                trianglesB = tris;
+                QMessageBox::information(this, "Import STL", "Loaded as B: " + fileName);
+            }
+            loadToA = !loadToA;
+            stlwidget->update();
+        }
+        else
+        {
+            QMessageBox::warning(this, "Import STL", "Failed to load STL file.");
+        }
+    }
+}
+
+void MainWindow::onFindIntersection()
+{
+    // Just update the GLWidget to show intersection (if any) between trianglesA and trianglesB
+    stlwidget->update();
+    QMessageBox::information(this, "Find Intersection", "Intersection (if any) is now shown in the view.");
 }
